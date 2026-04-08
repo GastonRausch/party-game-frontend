@@ -13,7 +13,15 @@ let socket: Socket | null = null;
 
 export function getSocket(): Socket {
   if (!socket) {
-    socket = io(BACKEND_URL, { autoConnect: false });
+    socket = io(BACKEND_URL, {
+      autoConnect: false,
+      // Reconnect aggressively — phones lose the connection when backgrounded
+      reconnection: true,
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 1_000,      // start retrying after 1 s
+      reconnectionDelayMax: 5_000,   // never wait more than 5 s between attempts
+      timeout: 20_000,
+    });
   }
   return socket;
 }
